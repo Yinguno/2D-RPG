@@ -13,15 +13,19 @@ public class BackGround : MonoBehaviour
     {
         MoveBGCamera();
     }
+    private void OnValidate()
+    {
+        MoveBGCamera();
+    }
     private void MoveBGCamera()
     {
 
-        Camera_BackGround.position = ConvertMainCameraPosToBackGroundPos();
+        Camera_BackGround.localPosition = ConvertMainCameraPosToBackGroundPos();
     }
 
     private Vector3 ConvertMainCameraPosToBackGroundPos()
     {
-        Vector3 pos = (Vector3)offset + Camera.main.transform.position * distanceFromCamera;
+        Vector3 pos = (Camera.main.transform.position - (Vector3)offset) / distanceFromCamera;
         pos.z = Camera.main.transform.position.z;
         return pos;
     }
