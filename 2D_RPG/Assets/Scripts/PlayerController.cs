@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
         rb.velocity = new Vector2(speed * Input.GetAxisRaw("Horizontal"), rb.velocity.y);
         animator.SetFloat("Velocity_X", Mathf.Abs(Input.GetAxisRaw("Horizontal")));
         animator.SetFloat("Velocity_Y", rb.velocity.y);
-        if (Input.GetKeyDown(KeyCode.Space) && groundDetector.IsTouchingGround())
+        if (Input.GetKey(KeyCode.Space) && groundDetector.IsTouchingGround())
         {
             animator.SetTrigger("Jump");
             rb.velocity = new Vector2(rb.velocity.x, jumpForce);

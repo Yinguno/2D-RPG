@@ -24,11 +24,11 @@ public class GroundDetector : MonoBehaviour
 
     void Update()
     {
-        DetectGround();
+        UpdateGroundTouchState();
 
     }
 
-    void DetectGround()
+    void UpdateGroundTouchState()
     {
         if (!IsTouchingGround() && IsBoxCastHit())
         {
