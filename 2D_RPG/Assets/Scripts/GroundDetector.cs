@@ -7,13 +7,16 @@ public class GroundDetector : MonoBehaviour
     [SerializeField] Vector2 size;
     public LayerMask layer;
     public float distance;
+    public float radius;
     [SerializeField] bool isTouchingGround;
     [SerializeField] bool showRay;
 
 
-
     public delegate void landEventHandler();
     public event landEventHandler onLand;
+
+
+
 
 
     void Start()
@@ -22,7 +25,7 @@ public class GroundDetector : MonoBehaviour
     }
 
 
-    void Update()
+    void FixedUpdate()
     {
         UpdateGroundTouchState();
 
@@ -36,6 +39,8 @@ public class GroundDetector : MonoBehaviour
         }
         SetIsTouchingGround(IsBoxCastHit());
 
+
+
     }
 
     private void TriggerOnLandEvent()
@@ -48,12 +53,15 @@ public class GroundDetector : MonoBehaviour
 
     bool IsBoxCastHit()
     {
-        RaycastHit2D hit2D = Physics2D.BoxCast(transform.position, size, 0f, Vector2.down, distance, layer);
-        if (hit2D.collider != null)
+        RaycastHit2D[] hit2Ds = Physics2D.BoxCastAll(transform.position, size, 0f, Vector2.down, distance, layer);
+        //RaycastHit2D[] hit2Ds = Physics2D.CircleCastAll(transform.position, radius, Vector2.down, distance, layer);
+        foreach (RaycastHit2D hit2D in hit2Ds)
         {
-            Debug.Log(hit2D.collider.name);
+            //Debug.Log(hit2D.transform.name);
         }
-        return hit2D.collider != null;
+
+
+        return hit2Ds.Length > 0;
     }
 
 
@@ -68,9 +76,9 @@ public class GroundDetector : MonoBehaviour
     }
     private void OnDrawGizmos()
     {
-        Gizmos.DrawCube(transform.position + (Vector3)Vector2.down * distance, size);
+        Gizmos.DrawCube(transform.position + Vector3.down * distance, size);
+        //Gizmos.DrawSphere(transform.position + Vector3.down * distance, radius);
     }
-
 
 
 

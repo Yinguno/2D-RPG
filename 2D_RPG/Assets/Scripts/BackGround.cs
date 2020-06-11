@@ -9,7 +9,7 @@ public class BackGround : MonoBehaviour
     public Vector2 offset;
     public float distanceFromCamera;
 
-    private void Update()
+    private void FixedUpdate()
     {
         MoveBGCamera();
     }

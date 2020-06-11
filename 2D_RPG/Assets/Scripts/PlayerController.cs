@@ -8,13 +8,17 @@ public class PlayerController : MonoBehaviour
     Rigidbody2D rb;
     GroundDetector groundDetector;
 
-    public float speed;
-    public float jumpForce;
-    [SerializeField] bool showGroundTest;
-    [SerializeField] Vector2 GroundRayPoint;
-    [SerializeField] float GroundRaycastDistance;
+    public float walkVelocity;
+    public float jumpVelocity;
     SpriteRenderer spriteRenderer;
     Animator animator;
+    public int sticklayer = 10;
+    public Vector2 size;
+    public float distance;
+
+    bool isMovingDown;
+
+    public Vector2 direction;
 
     void Start()
     {
@@ -27,20 +31,79 @@ public class PlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (Input.GetAxisRaw("Horizontal") != 0)
+        RaycastBox();
+
+
+        if (Input.GetAxisRaw("Horizontal") > 0)
         {
-            spriteRenderer.flipX = Input.GetAxisRaw("Horizontal") < 0;
+            transform.rotation = Quaternion.Euler(new Vector3(0, 0, 0));
+        }
+        else if (Input.GetAxisRaw("Horizontal") < 0)
+        {
+            transform.rotation = Quaternion.Euler(new Vector3(0, 180, 0));
         }
 
-        rb.velocity = new Vector2(speed * Input.GetAxisRaw("Horizontal"), rb.velocity.y);
+        rb.velocity = new Vector2(walkVelocity * Input.GetAxisRaw("Horizontal"), rb.velocity.y);
         animator.SetFloat("Velocity_X", Mathf.Abs(Input.GetAxisRaw("Horizontal")));
         animator.SetFloat("Velocity_Y", rb.velocity.y);
-        if (Input.GetKey(KeyCode.Space) && groundDetector.IsTouchingGround())
+
+
+        if (rb.velocity.y >= 0.1f || isMovingDown)
         {
-            animator.SetTrigger("Jump");
-            rb.velocity = new Vector2(rb.velocity.x, jumpForce);
+            IgnoreStickCollision(true);
+        }
+        else
+        {
+            IgnoreStickCollision(false);
         }
 
+        if (Input.GetKeyDown(KeyCode.DownArrow) && !isMovingDown && Mathf.Abs(rb.velocity.y) <= 0.1f)
+        {
+
+            StartCoroutine(MoveDown());
+        }
+
+
+        if (Input.GetKey(KeyCode.Space) && groundDetector.IsTouchingGround() && !isMovingDown)
+        {
+            animator.SetTrigger("Jump");
+            //Debug.Log("Jump " + groundDetector.IsTouchingGround());
+            rb.velocity = new Vector2(rb.velocity.x, jumpVelocity);
+        }
+
+
+
+    }
+
+    private void IgnoreStickCollision(bool value)
+    {
+        Physics2D.IgnoreLayerCollision(gameObject.layer, sticklayer, value);
+    }
+
+    IEnumerator MoveDown()
+    {
+        isMovingDown = true;
+        yield return new WaitForSeconds(0.4f);
+
+        isMovingDown = false;
+    }
+
+    private void RaycastBox()
+    {
+        RaycastHit2D[] hit2Ds = Physics2D.BoxCastAll(transform.position, size, 0f, direction, distance);
+
+        foreach (RaycastHit2D hit2D in hit2Ds)
+        {
+            Debug.Log(hit2D.collider.gameObject.layer);
+            if (hit2D.collider.gameObject.layer == sticklayer && !isMovingDown && Mathf.Abs(rb.velocity.y) < 0.1f)
+            {
+                StartCoroutine(MoveDown());
+            }
+        }
+    }
+    private void OnDrawGizmos()
+    {
+        Gizmos.DrawCube(transform.position + ((Vector3)direction * distance), size);
     }
 
 
