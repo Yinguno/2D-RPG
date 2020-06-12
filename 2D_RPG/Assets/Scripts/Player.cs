@@ -16,8 +16,8 @@ public class Player : MonoBehaviour
     public float jumpVelocity;
 
 
-    [SerializeField] BoxCast stickBoxCast;
-    [SerializeField] BoxCast groundBoxCast;
+    [SerializeField] private BoxCast stickBoxCast;
+    [SerializeField] public BoxCast groundBoxCast;
 
     /*    
     玩家功能：
@@ -108,6 +108,7 @@ public class Player : MonoBehaviour
     }
     IEnumerator JumpIgnoreCollision()
     {
+        groundBoxCast.isJumping = true;
         isJumping = true;
         stickBoxCast.IgnoreLayerCollision(true);
         yield return new WaitUntil(() =>
@@ -120,7 +121,10 @@ public class Player : MonoBehaviour
             return rb.velocity.y <= 0;
         });
         stickBoxCast.IgnoreLayerCollision(false);
+        yield return new WaitUntil(() => { return rb.velocity.y > -0.1f; });
+        groundBoxCast.isJumping = false;
         isJumping = false;
+
     }
 
     private void ApplyHorizontalMove(float axis)
