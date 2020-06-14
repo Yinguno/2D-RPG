@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[ExecuteInEditMode]
+//[ExecuteInEditMode]
 public class BackGround : MonoBehaviour
 {
     public Transform player;
@@ -11,7 +11,7 @@ public class BackGround : MonoBehaviour
     public float distanceFromCamera;
     private void Awake()
     {
-        UnityEditor.EditorApplication.update += FixedUpdate;
+        //UnityEditor.EditorApplication.update += FixedUpdate;
     }
     private void FixedUpdate()
     {

@@ -50,3 +50,9 @@ TagManager:
   - name: Player
     uniqueID: 2457272567
     locked: 0
+  - name: Item
+    uniqueID: 903405059
+    locked: 0
+  - name: Fx
+    uniqueID: 1011362135
+    locked: 0
